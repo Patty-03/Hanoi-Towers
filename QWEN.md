@@ -1,0 +1,1 @@
+La generación de código debe ser en español siempre acompañada de una documentación y comentarios

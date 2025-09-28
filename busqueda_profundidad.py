@@ -71,7 +71,6 @@ def hanoi_busqueda_profundidad(n_discos):
     print("El algoritmo no encontró una solución...")
     return False
 
-# --- Uso del programa ---
 if __name__ == "__main__":
     try:
         n_discos = int(input("Introduce la cantidad de discos (un número entero): "))
