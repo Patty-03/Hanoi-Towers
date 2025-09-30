@@ -28,6 +28,13 @@ Contiene una implementación de búsqueda voraz (greedy search):
 - En cada paso, selecciona el estado que parece más prometedor según la heurística
 - No garantiza la solución óptima, pero puede ser más eficiente que BFS
 
+### 5. `profundidad_limitada.py` - Búsqueda en Profundidad Limitada
+Contiene una implementación del algoritmo de búsqueda en profundidad limitada (DFS-Limited):
+- Extiende el algoritmo de búsqueda en profundidad estándar con un límite de profundidad
+- Explora hasta una profundidad específica antes de retroceder
+- Evita explorar caminos infinitos o muy largos al imponer un límite máximo de profundidad
+- No garantiza encontrar la solución óptima si el límite es demasiado bajo
+
 ## Archivos Vacíos
 
 Los siguientes archivos están presentes en la estructura de directorios pero actualmente están vacíos:
@@ -36,7 +43,6 @@ Los siguientes archivos están presentes en la estructura de directorios pero ac
 - `hill_climbing.py` - Hill Climbing
 - `busqueda_tabu.py` - Búsqueda Tabú
 - `estrategia_evolutiva.py` - Estrategia Evolutiva
-- `profundidad_limitada.py` - Búsqueda en Profundidad Limitada
 - `recocido_simulado.py` - Recocido Simulado
 
 ## Estructura de los Estados
