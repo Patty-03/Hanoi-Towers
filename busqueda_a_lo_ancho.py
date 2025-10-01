@@ -1,9 +1,6 @@
 from collections import deque
 
 def generar_sucesores(estado):
-    """
-    Genera todos los estados válidos a los que se puede transicionar.
-    """
     sucesores = []
     
     for i in range(3):
@@ -28,22 +25,17 @@ def generar_sucesores(estado):
     return sucesores
 
 def hanoi_busqueda_a_lo_ancho(n_discos):
-    """
-    Resuelve el problema de las Torres de Hanoi con búsqueda a lo ancho (BFS)
-    para una cantidad 'n' de discos.
-    """
-    # Se genera el estado inicial a partir de n_discos
     estado_inicial = (
-        tuple(range(n_discos, 0, -1)),  # Torre 0: discos del más grande al más pequeño
-        (),  # Torre 1: vacía
-        ()   # Torre 2: vacía
+        tuple(range(n_discos, 0, -1)),  
+        (), 
+        ()  
     )
     
-    # Se genera el estado final
+
     estado_final = (
         (),
         (),
-        tuple(range(n_discos, 0, -1)) # Torre 2: discos apilados correctamente
+        tuple(range(n_discos, 0, -1)) 
     )
 
     cola = deque([(estado_inicial, [])])
@@ -55,7 +47,7 @@ def hanoi_busqueda_a_lo_ancho(n_discos):
         estado_actual, camino_actual = cola.popleft()
 
         if estado_actual == estado_final:
-            print("¡Solución encontrada! 🎉")
+            print("¡Solución encontrada! ")
             print(f"Número de movimientos: {len(camino_actual)}")
             for i, movimiento in enumerate(camino_actual):
                 print(f"Paso {i+1}: Mover de la torre {movimiento[0]} a la torre {movimiento[1]}")
@@ -70,7 +62,7 @@ def hanoi_busqueda_a_lo_ancho(n_discos):
     print("El algoritmo no encontró una solución.")
     return False
 
-# --- Uso del programa ---
+
 if __name__ == "__main__":
     try:
         n_discos = int(input("Introduce la cantidad de discos (un número entero): "))

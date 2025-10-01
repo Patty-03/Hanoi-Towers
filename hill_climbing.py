@@ -1,7 +1,4 @@
 def generar_sucesores(estado):
-    """
-    Genera todos los estados válidos a los que se puede transicionar.
-    """
     sucesores = []
     
     for i in range(3):
@@ -27,14 +24,9 @@ def generar_sucesores(estado):
 
 
 def calcular_heuristica(estado, n_discos):
-    """
-    Calcula una heurística para el estado actual.
-    Devuelve el número de discos que no están en la torre objetivo (torre 2).
-    """
     discos_fuera_de_lugar = 0
     torre_final = 2
     
-    # Contamos los discos que no están en la torre final
     for disco in range(1, n_discos + 1):
         en_torre_final = False
         for torre_idx, torre in enumerate(estado):
@@ -48,25 +40,16 @@ def calcular_heuristica(estado, n_discos):
 
 
 def hanoi_hill_climbing(n_discos, max_iter=10000):
-    """
-    Resuelve el problema de las Torres de Hanoi con el algoritmo Hill Climbing.
-    
-    Este algoritmo busca mejorar el estado actual seleccionando en cada paso
-    al sucesor con la mejor heurística (más cercano al estado objetivo),
-    sin permitir movimientos que empeoren la solución.
-    """
-    # Se genera el estado inicial a partir de n_discos
     estado_inicial = (
-        tuple(range(n_discos, 0, -1)),  # Torre 0: discos del más grande al más pequeño
-        (),  # Torre 1: vacía
-        ()   # Torre 2: vacía
+        tuple(range(n_discos, 0, -1)),
+        (),
+        () 
     )
     
-    # Se genera el estado final
     estado_final = (
         (),
         (),
-        tuple(range(n_discos, 0, -1)) # Torre 2: discos apilados correctamente
+        tuple(range(n_discos, 0, -1))
     )
 
     print(f"Resolviendo las Torres de Hanoi con {n_discos} discos usando Hill Climbing...")
@@ -88,7 +71,7 @@ def hanoi_hill_climbing(n_discos, max_iter=10000):
             print("No hay más movimientos posibles.")
             break
         
-        # Hill Climbing: seleccionamos el mejor sucesor (menor heurística)
+        # Se selecciona al mejor sucesor (al que tenga menor heuristica)
         mejor_sucesor = None
         mejor_heuristica = float('inf')
         
@@ -98,8 +81,6 @@ def hanoi_hill_climbing(n_discos, max_iter=10000):
                 mejor_heuristica = heuristica
                 mejor_sucesor = (sucesor_estado, movimiento)
         
-        # En Hill Climbing, solo avanzamos si encontramos un mejor estado
-        # Si el mejor sucesor no mejora (mínimo local), terminamos
         if mejor_sucesor is not None and mejor_heuristica < calcular_heuristica(estado_actual, n_discos):
             estado_actual = mejor_sucesor[0]
             camino_actual.append(mejor_sucesor[1])
@@ -107,7 +88,7 @@ def hanoi_hill_climbing(n_discos, max_iter=10000):
             print("Algoritmo Hill Climbing atascado en un mínimo local.")
             break
 
-    print("El algoritmo no encontró una solución (posiblemente atascado en un mínimo local).")
+    print("El algoritmo no encontró una solución.")
     print(f"Iteraciones realizadas: {iteracion + 1}")
     return False
 
@@ -115,7 +96,7 @@ def hanoi_hill_climbing(n_discos, max_iter=10000):
 # --- Uso del programa ---
 if __name__ == "__main__":
     try:
-        n_discos = int(input("Introduce la cantidad de discos (un número entero): "))
+        n_discos = int(input("Introduce la cantidad de discos: "))
         if n_discos > 0:
             hanoi_hill_climbing(n_discos)
         else:

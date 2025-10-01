@@ -3,26 +3,16 @@ import time
 
 
 def generar_estado_inicial(n_discos):
-    """
-    Genera el estado inicial para n discos.
-    """
     discos = tuple(range(n_discos, 0, -1))
     return (discos, (), ())
 
 
 def generar_estado_final(n_discos):
-    """
-    Genera el estado final para n discos.
-    """
     discos = tuple(range(n_discos, 0, -1))
     return ((), (), discos)
 
 
 def validar_estado(estado, n_discos):
-    """
-    Valida que un estado sea válido según las reglas del juego.
-    """
-    # Verificar que cada disco esté en alguna torre
     discos_en_estado = []
     for torre in estado:
         discos_en_estado.extend(torre)
@@ -46,30 +36,26 @@ def validar_estado(estado, n_discos):
 
 
 def aplicar_movimiento(estado, movimiento):
-    """
-    Aplica un movimiento a un estado y devuelve el nuevo estado.
-    """
     origen, destino = movimiento
     if origen < 0 or origen > 2 or destino < 0 or destino > 2:
-        return estado  # Movimiento inválido
+        return estado
     
     if origen == destino:
-        return estado  # Movimiento inválido
+        return estado 
     
-    if not estado[origen]:  # Torre origen vacía
+    if not estado[origen]: 
         return estado
     
     disco_superior = estado[origen][-1]
-    if estado[destino] and disco_superior > estado[destino][-1]:  # Movimiento inválido
+    if estado[destino] and disco_superior > estado[destino][-1]:
         return estado
     
-    # Realizar el movimiento
     nuevo_estado = []
     for i, torre in enumerate(estado):
         if i == origen:
-            nueva_torre = torre[:-1]  # Quitar disco superior
+            nueva_torre = torre[:-1] 
         elif i == destino:
-            nueva_torre = torre + (disco_superior,)  # Añadir disco superior
+            nueva_torre = torre + (disco_superior,)  
         else:
             nueva_torre = torre
         nuevo_estado.append(nueva_torre)
@@ -78,9 +64,6 @@ def aplicar_movimiento(estado, movimiento):
 
 
 def generar_movimientos_validos(estado):
-    """
-    Genera todos los movimientos válidos desde un estado.
-    """
     movimientos = []
     for origen in range(3):
         for destino in range(3):
@@ -93,9 +76,8 @@ def generar_movimientos_validos(estado):
 
 
 def calcular_distancia_estado(estado, estado_final):
-    """
-    Calcula una medida de cuán lejos está un estado del estado final.
-    """
+    #Calcula una medida de cuán lejos está un estado del estado final.
+
     distancia = 0
     for disco in range(1, len(estado[0]) + len(estado[1]) + len(estado[2]) + 1):
         # Encontrar en qué torre está el disco en el estado actual
@@ -128,15 +110,14 @@ def calcular_distancia_estado(estado, estado_final):
 
 
 def evaluar_solucion(movimientos, n_discos):
-    """
-    Evalúa una secuencia de movimientos y devuelve un valor de fitness.
-    """
+    #Devuelve un valor de fitness
+
     estado_inicial = generar_estado_inicial(n_discos)
     estado_final = generar_estado_final(n_discos)
     
     estado_actual = estado_inicial
     
-    # Aplicar movimientos secuencialmente
+    # Aplicar movimientos
     for movimiento in movimientos:
         estado_actual = aplicar_movimiento(estado_actual, movimiento)
         if estado_actual == estado_final:
@@ -147,7 +128,7 @@ def evaluar_solucion(movimientos, n_discos):
     distancia_final = calcular_distancia_estado(estado_actual, estado_final)
     
     # El fitness es menor cuanto más larga es la secuencia y más lejos está del objetivo
-    # Usaremos una fórmula que premia estar cerca del estado final y penaliza secuencias largas
+    # Se penalizan secuencias largas y se premian soluciones mas cerca del objetivo
     if distancia_final == 0:
         return 10000 - len(movimientos)
     else:
@@ -158,9 +139,6 @@ def evaluar_solucion(movimientos, n_discos):
 
 
 def generar_secuencia_aleatoria(n_discos, longitud_maxima):
-    """
-    Genera una secuencia aleatoria de movimientos de longitud variable.
-    """
     estado_actual = generar_estado_inicial(n_discos)
     secuencia = []
     
@@ -173,7 +151,7 @@ def generar_secuencia_aleatoria(n_discos, longitud_maxima):
         secuencia.append(movimiento)
         estado_actual = aplicar_movimiento(estado_actual, movimiento)
         
-        # Terminar si alcanzamos el estado final
+        # Terminar si se alcanza el estado final
         if estado_actual == generar_estado_final(n_discos):
             break
     
@@ -203,7 +181,7 @@ def mutar_secuencia_evolutiva(secuencia, n_discos, sigma=0.3):
             if movimientos_validos:
                 secuencia_mutada[i] = random.choice(movimientos_validos)
     
-    # Opcionalmente, añadir o eliminar movimientos con menor probabilidad
+    # Añadir o eliminar movimientos con menor probabilidad
     if random.random() < sigma/2:
         # Añadir un movimiento aleatorio al final
         if len(secuencia_mutada) < 2 * n_discos:  # Limitar longitud
@@ -224,17 +202,12 @@ def mutar_secuencia_evolutiva(secuencia, n_discos, sigma=0.3):
 
 
 def hanoi_estrategia_evolutiva(n_discos, tam_poblacion=20, tam_offspring=40, generaciones=500):
-    """
-    Resuelve las Torres de Hanoi usando una estrategia evolutiva (mu + lambda).
-    En esta estrategia, se mantiene una población de mu padres, y se generan lambda hijos,
-    de los cuales los mu mejores pasan a la siguiente generación.
-    """
     print(f"\nResolviendo Torres de Hanoi con {n_discos} discos usando Estrategia Evolutiva...")
-    print(f"Tamaño de la población (mu): {tam_poblacion}, Tamaño de offspring (lambda): {tam_offspring}, Generaciones: {generaciones}")
+    print(f"Tamaño de la población (mu): {tam_poblacion}, Tamaño de lambda (cantidad de hijos generados): {tam_offspring}, Generaciones: {generaciones}")
     
     # Parámetros
-    longitud_maxima_secuencia = min(2 ** n_discos - 1, n_discos * 4)  # Limitar razonablemente
-    tam_elite = tam_poblacion  # Seleccionamos los mu mejores de la población actual + offspring
+    longitud_maxima_secuencia = min(2 ** n_discos - 1, n_discos * 4)
+    tam_elite = tam_poblacion  # Seleccionamos los mu mejores de la población actual + lambda
     
     # Inicializar población (mu)
     poblacion = []
@@ -246,7 +219,6 @@ def hanoi_estrategia_evolutiva(n_discos, tam_poblacion=20, tam_offspring=40, gen
     mejor_fitness_global = float('-inf')
     mejor_generacion = 0
     
-    # Bucle principal de la estrategia evolutiva
     for generacion in range(generaciones):
         # Evaluar fitness de cada individuo en la población actual
         fitnesses_poblacion = [evaluar_solucion(secuencia, n_discos) for secuencia in poblacion]
@@ -303,7 +275,7 @@ def hanoi_estrategia_evolutiva(n_discos, tam_poblacion=20, tam_offspring=40, gen
                 print(f"Cantidad óptima teórica: {2**n_discos - 1}")
                 return mejor_global
         
-        # Mostrar progreso periódicamente
+        # Mostrar progreso
         if generacion % 50 == 0 or generacion == generaciones - 1:
             print(f"Generación {generacion}: Mejor fitness actual = {fitness_mejor_actual}, "
                   f"Mejor global = {mejor_fitness_global} (gen {mejor_generacion})")
@@ -311,8 +283,8 @@ def hanoi_estrategia_evolutiva(n_discos, tam_poblacion=20, tam_offspring=40, gen
         # Actualizar la población
         poblacion = nueva_poblacion
     
-    # Al finalizar todas las generaciones
-    print(f"\n¡Ejecución finalizada! Mejor solución encontrada en la generación {mejor_generacion}")
+
+    print(f"\nEjecución finalizada Mejor solución encontrada en la generación {mejor_generacion}")
     print(f"Fitness de la mejor solución: {mejor_fitness_global}")
     
     # Aplicar la mejor solución encontrada para ver el estado final
@@ -340,7 +312,6 @@ if __name__ == "__main__":
         if n_discos < 1:
             print("Por favor, introduce un número entero positivo (al menos 1).")
         else:
-            # Resolver usando estrategia evolutiva
             solucion = hanoi_estrategia_evolutiva(n_discos)
             
             if solucion:

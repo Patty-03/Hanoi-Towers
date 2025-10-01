@@ -1,9 +1,6 @@
 from collections import deque
 
 def generar_sucesores(estado):
-    """
-    Genera todos los estados válidos a los que se puede transicionar.
-    """
     sucesores = []
     
     for i in range(3):
@@ -28,24 +25,18 @@ def generar_sucesores(estado):
 
 
 def hanoi_busqueda_profundidad(n_discos):
-    """
-    Resuelve el problema de las Torres de Hanoi con búsqueda en profundidad (DFS)
-    para una cantidad 'n' de discos.
-    """
     print(f"Torres de Hanoi usando busqueda en profundidad con {n_discos} discos")
     
-    # Se genera el estado inicial a partir de n_discos
     estado_inicial = (
-        tuple(range(n_discos, 0, -1)),  # Torre 0: discos del más grande al más pequeño
-        (),  # Torre 1: vacía
-        ()   # Torre 2: vacía
+        tuple(range(n_discos, 0, -1)),  
+        (),
+        ()   
     )
     
-    # Se genera el estado final
     estado_final = (
         (),
         (),
-        tuple(range(n_discos, 0, -1)) # Torre 2: discos apilados correctamente
+        tuple(range(n_discos, 0, -1))
     )
 
     pila = deque([(estado_inicial, [])])

@@ -3,9 +3,6 @@ import random
 
 
 def generar_sucesores(estado):
-    """
-    Genera todos los estados válidos a los que se puede transicionar.
-    """
     sucesores = []
     
     for i in range(3):
@@ -31,14 +28,9 @@ def generar_sucesores(estado):
 
 
 def calcular_heuristica(estado, n_discos):
-    """
-    Calcula una heurística para el estado actual.
-    Devuelve el número de discos que no están en la torre objetivo (torre 2).
-    """
     discos_fuera_de_lugar = 0
     torre_final = 2
     
-    # Contamos los discos que no están en la torre final
     for disco in range(1, n_discos + 1):
         en_torre_final = False
         for torre_idx, torre in enumerate(estado):
@@ -52,25 +44,16 @@ def calcular_heuristica(estado, n_discos):
 
 
 def hanoi_recocido_simulado(n_discos, temp_inicial=1000, temp_final=1, enfriamiento=0.95, max_iter_por_temp=100):
-    """
-    Resuelve el problema de las Torres de Hanoi con recocido simulado.
-    
-    El recocido simulado es un método probabilístico para aproximar el 
-    mínimo global de una función. Permite movimientos que empeoran la 
-    solución con cierta probabilidad que disminuye con el tiempo.
-    """
-    # Se genera el estado inicial a partir de n_discos
     estado_inicial = (
-        tuple(range(n_discos, 0, -1)),  # Torre 0: discos del más grande al más pequeño
-        (),  # Torre 1: vacía
-        ()   # Torre 2: vacía
+        tuple(range(n_discos, 0, -1)),  
+        (), 
+        ()
     )
     
-    # Se genera el estado final
     estado_final = (
         (),
         (),
-        tuple(range(n_discos, 0, -1)) # Torre 2: discos apilados correctamente
+        tuple(range(n_discos, 0, -1))
     )
 
     print(f"Resolviendo las Torres de Hanoi con {n_discos} discos usando Recocido Simulado...")
@@ -83,7 +66,6 @@ def hanoi_recocido_simulado(n_discos, temp_inicial=1000, temp_final=1, enfriamie
     
     temperatura = temp_inicial
     
-    # Contadores para estadísticas
     iteraciones_totales = 0
     movimientos_aceptados = 0
     movimientos_rechazados = 0

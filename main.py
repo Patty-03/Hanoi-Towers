@@ -30,11 +30,11 @@ def ejecutar_algoritmo(nombre_algoritmo, n_discos):
         from alg_genetico import hanoi_algoritmo_genetico
         return hanoi_algoritmo_genetico(n_discos)
     elif nombre_algoritmo == "10":
-        from a_asterisco import hanoi_a_star  # Asumiendo que este archivo está implementado
+        from a_asterisco import hanoi_a_star
         return hanoi_a_star(n_discos)
     elif nombre_algoritmo == "11":
-        from profundidad_limitada import hanoi_profundidad_limitada  # Asumiendo que este archivo está implementado
-        return hanoi_profundidad_limitada(n_discos)
+        from profundidad_limitada import hanoi_busqueda_profundidad_limitada
+        return hanoi_busqueda_profundidad_limitada(n_discos, limite_profundidad)
     else:
         print("Opción no válida.")
         return False

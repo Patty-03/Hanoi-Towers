@@ -2,70 +2,55 @@ import random
 import time
 
 def generar_estado_inicial(n_discos):
-    """
-    Genera el estado inicial para n discos.
-    """
     discos = tuple(range(n_discos, 0, -1))
     return (discos, (), ())
 
 def generar_estado_final(n_discos):
-    """
-    Genera el estado final para n discos.
-    """
     discos = tuple(range(n_discos, 0, -1))
     return ((), (), discos)
 
 def validar_estado(estado, n_discos):
-    """
-    Valida que un estado sea válido según las reglas del juego.
-    """
-    # Verificar que cada disco esté en alguna torre
     discos_en_estado = []
     for torre in estado:
         discos_en_estado.extend(torre)
     
-    # Verificar que haya exactamente n_discos discos
     if len(discos_en_estado) != n_discos:
         return False
     
-    # Verificar que cada disco tenga un valor válido
     discos_en_estado.sort()
     if discos_en_estado != list(range(1, n_discos + 1)):
         return False
     
-    # Verificar que en cada torre los discos estén en orden válido (más grandes abajo)
     for torre in estado:
         for i in range(len(torre) - 1):
-            if torre[i] < torre[i + 1]:  # Disco grande debajo de disco pequeño
+            if torre[i] < torre[i + 1]:
                 return False
     
     return True
 
 def aplicar_movimiento(estado, movimiento):
-    """
-    Aplica un movimiento a un estado y devuelve el nuevo estado.
-    """
     origen, destino = movimiento
     if origen < 0 or origen > 2 or destino < 0 or destino > 2:
-        return estado  # Movimiento inválido
+        return estado 
     
     if origen == destino:
-        return estado  # Movimiento inválido
+        return estado 
     
-    if not estado[origen]:  # Torre origen vacía
+    if not estado[origen]:
         return estado
     
     disco_superior = estado[origen][-1]
-    if estado[destino] and disco_superior > estado[destino][-1]:  # Movimiento inválido
+    if estado[destino] and disco_superior > estado[destino][-1]:
         return estado
     
-    # Realizar el movimiento
     nuevo_estado = []
     for i, torre in enumerate(estado):
         if i == origen:
-            nueva_torre = torre[:-1]  # Quitar disco superior
+            # Quitar disco superior
+            nueva_torre = torre[:-1]
         elif i == destino:
-            nueva_torre = torre + (disco_superior,)  # Añadir disco superior
+            # Añadir disco superior
+            nueva_torre = torre + (disco_superior,)
         else:
             nueva_torre = torre
         nuevo_estado.append(nueva_torre)
@@ -73,9 +58,6 @@ def aplicar_movimiento(estado, movimiento):
     return tuple(nuevo_estado)
 
 def generar_movimientos_validos(estado):
-    """
-    Genera todos los movimientos válidos desde un estado.
-    """
     movimientos = []
     for origen in range(3):
         for destino in range(3):
@@ -87,12 +69,8 @@ def generar_movimientos_validos(estado):
     return movimientos
 
 def calcular_distancia_estado(estado, estado_final):
-    """
-    Calcula una medida de cuán lejos está un estado del estado final.
-    """
     distancia = 0
     for disco in range(1, len(estado[0]) + len(estado[1]) + len(estado[2]) + 1):
-        # Encontrar en qué torre está el disco en el estado actual
         torre_actual = None
         pos_actual = None
         for i, torre in enumerate(estado):
@@ -101,7 +79,7 @@ def calcular_distancia_estado(estado, estado_final):
                 pos_actual = torre.index(disco)
                 break
         
-        # Encontrar en qué torre debería estar el disco en el estado final
+        # Encuentra en qué torre debería estar el disco en el estado final
         torre_final = None
         pos_final = None
         for i, torre in enumerate(estado_final):
@@ -121,9 +99,8 @@ def calcular_distancia_estado(estado, estado_final):
     return distancia
 
 def evaluar_solucion(movimientos, n_discos):
-    """
-    Evalúa una secuencia de movimientos y devuelve un valor de fitness.
-    """
+    #Evalúa una secuencia de movimientos y devuelve un valor de fitness.
+
     estado_inicial = generar_estado_inicial(n_discos)
     estado_final = generar_estado_final(n_discos)
     
@@ -136,11 +113,10 @@ def evaluar_solucion(movimientos, n_discos):
             # Solución encontrada, devolver fitness alto
             return 10000 - len(movimientos)  # Penalizar por longitud de la solución
     
-    # Calcular distancia al estado final
     distancia_final = calcular_distancia_estado(estado_actual, estado_final)
     
     # El fitness es menor cuanto más larga es la secuencia y más lejos está del objetivo
-    # Usaremos una fórmula que premia estar cerca del estado final y penaliza secuencias largas
+    # Se usa una fórmula que premia estar cerca del estado final y penaliza secuencias largas
     if distancia_final == 0:
         return 10000 - len(movimientos)
     else:
@@ -150,39 +126,33 @@ def evaluar_solucion(movimientos, n_discos):
         return fitness
 
 def generar_secuencia_aleatoria(n_discos, longitud_maxima):
-    """
-    Genera una secuencia aleatoria de movimientos de longitud variable.
-    """
     estado_actual = generar_estado_inicial(n_discos)
     secuencia = []
     
     for _ in range(longitud_maxima):
         movimientos_posibles = generar_movimientos_validos(estado_actual)
         if not movimientos_posibles:
-            break  # No se pueden hacer más movimientos
+            break 
         
         movimiento = random.choice(movimientos_posibles)
         secuencia.append(movimiento)
         estado_actual = aplicar_movimiento(estado_actual, movimiento)
         
-        # Terminar si alcanzamos el estado final
         if estado_actual == generar_estado_final(n_discos):
             break
     
     return secuencia
 
 def seleccion_torneo(poblacion, fitnesses, tam_torneo=3):
-    """
-    Selecciona un individuo mediante torneo.
-    """
+    #Selecciona un individuo por torneo.
+
     participantes = random.sample(list(zip(poblacion, fitnesses)), tam_torneo)
     ganador = max(participantes, key=lambda x: x[1])
     return ganador[0]
 
 def cruce_ordenado(padre1, padre2, n_discos):
-    """
-    Cruza dos secuencias de movimientos manteniendo la validez.
-    """
+    #Cruza dos secuencias de movimientos manteniendo la validez.
+
     if not padre1 or not padre2:
         return random.choice([padre1, padre2]) if padre1 or padre2 else []
     
@@ -208,9 +178,8 @@ def cruce_ordenado(padre1, padre2, n_discos):
     return hijo1
 
 def mutar_secuencia(secuencia, n_discos, prob_mutacion=0.1):
-    """
-    Muta una secuencia de movimientos aleatoriamente.
-    """
+    #Muta una secuencia de movimientos aleatoriamente.
+
     if not secuencia:
         return secuencia
     
@@ -230,7 +199,7 @@ def mutar_secuencia(secuencia, n_discos, prob_mutacion=0.1):
             if movimientos_validos:
                 secuencia_mutada[i] = random.choice(movimientos_validos)
     
-    # Opcionalmente, añadir o eliminar movimientos
+    # Añadir o eliminar movimientos
     if random.random() < prob_mutacion:
         # Añadir un movimiento aleatorio al final
         if len(secuencia_mutada) < 2 * n_discos:  # Limitar longitud
@@ -250,9 +219,7 @@ def mutar_secuencia(secuencia, n_discos, prob_mutacion=0.1):
     return secuencia_mutada
 
 def hanoi_algoritmo_genetico(n_discos, tam_poblacion=100, generaciones=500, elitismo=0.1):
-    """
-    Resuelve las Torres de Hanoi usando un algoritmo genético.
-    """
+
     print(f"\nResolviendo Torres de Hanoi con {n_discos} discos usando Algoritmo Genético...")
     print(f"Tamaño de la población: {tam_poblacion}, Generaciones: {generaciones}")
     
@@ -270,7 +237,6 @@ def hanoi_algoritmo_genetico(n_discos, tam_poblacion=100, generaciones=500, elit
     mejor_fitness_global = float('-inf')
     mejor_generacion = 0
     
-    # Bucle principal del algoritmo genético
     for generacion in range(generaciones):
         # Evaluar fitness de cada individuo
         fitnesses = [evaluar_solucion(secuencia, n_discos) for secuencia in poblacion]
@@ -280,7 +246,7 @@ def hanoi_algoritmo_genetico(n_discos, tam_poblacion=100, generaciones=500, elit
         mejor_actual = poblacion[idx_mejor]
         fitness_mejor_actual = fitnesses[idx_mejor]
         
-        # Actualizar mejor global si es necesario
+        # Actualizar mejor global
         if fitness_mejor_actual > mejor_fitness_global:
             mejor_global = mejor_actual
             mejor_fitness_global = fitness_mejor_actual
@@ -345,13 +311,12 @@ def hanoi_algoritmo_genetico(n_discos, tam_poblacion=100, generaciones=500, elit
 
 if __name__ == "__main__":
     try:
-        n_discos_input = input("Introduce la cantidad de discos (un entero positivo, ej. 4): ")
+        n_discos_input = input("Introduce la cantidad de discos: ")
         n_discos = int(n_discos_input)
         
         if n_discos < 1:
             print("Por favor, introduce un número entero positivo (al menos 1).")
         else:
-            # Resolver usando algoritmo genético
             solucion = hanoi_algoritmo_genetico(n_discos)
             
             if solucion:
